@@ -8,7 +8,7 @@
     <meta name="description" content="Turn a .txt file of NMEA Sentences or a text input to a CSV file of GNSS/positional data">
     <meta name="author" content="Brendan Luke">
     <!--
-        Date: August 3, 2021
+        Date: August 4, 2021
     -->
 </head>
 <style>
@@ -17,26 +17,26 @@ button {
     color: white;
     border-radius: 1vh;
     padding: 1.2vh 2vw;
-    background-color: #0d5198;
+    background-color: #45900f;
     border: 0.4vh solid #444;
     transition-duration: 0.25s;
 }
 button:hover {
-    color: #45900f;
-    border-color: #45900f;
+    color: #0d5198;
+    border-color: #0d5198;
 }
 </style>
-<body style="background-color: #444;">
+<body style="background-color: #666;">
     <div id="inputHouse" style="display: flex;">
-        <div id="border1" style="display:flex; justify-content:center; align-items:center; width: 45vw; height: 35vh; background-color: #0d5198; margin-top: 31vh; margin-left: 3vw; border-radius: 3vw;">
+        <div id="border1" style="display:flex; justify-content:center; align-items:center; width: 45vw; height: 35vh; background-color: #45900f; margin-top: 31vh; margin-left: 3vw; border-radius: 3vw;">
             <div id="uploadButtonHouse" style="width: 42vw; height: 32vh; background-color: #eee; margin: none; border-radius: 3vw;">
                 <button onclick="fileUpload()" style="width: 35vw; height: 25vh; margin-top: 3.5vh; margin-left: 3.5vw;">Upload NMEA Sentences .txt File</button>
                 <input type="file" id="fileInput" accept=".txt" style="display: none;"/> <!--  this element is hidden and activated by button click^ because it has limited styling -->
             </div>
         </div>
-        <div id="border2" style="display:flex; justify-content:center; align-items:center; width: 45vw; height: 35vh; background-color: #0d5198; margin-top: 31vh; margin-left: 3vw; border-radius: 3vw;">
+        <div id="border2" style="display:flex; justify-content:center; align-items:center; width: 45vw; height: 35vh; background-color: #45900f; margin-top: 31vh; margin-left: 3vw; border-radius: 3vw;">
             <div id="uploadButtonHouse" style="width: 42vw; height: 32vh; background-color: #eee; margin: none; border-radius: 3vw;">
-                <label for="input" style="font-family: Arial, Helvetica, sans-serif; position: relative; left: 5vw; top: 1vh; font-size: 2vh; line-height: normal; color: #0d5198;">Paste NMEA Sentences here</label>
+                <label for="input" style="font-family: Arial, Helvetica, sans-serif; position: relative; left: 5vw; top: 1vh; font-size: 2vh; line-height: normal; color: #45900f;">Paste NMEA Sentences here</label>
                 <textarea id="textInput" name="input" style="width: 35vw; height: 25vh; margin-top: 1.5vh; margin-left: 3.5vw;"></textarea>
             </div>
         </div>
@@ -77,9 +77,18 @@ button:hover {
         var csvString = 'NMEA Sentence:,Time:,Validity:,Latitude (deg):,Longitude (deg):,Altitude ASL (m):,True Track (deg):,Magnetic Track (deg):,Ground Speed (kts):,Height Above Geoid (m):,PDOP:,HDOP:,VDOP:,Satellites in View (#):,Space Vehicle ID:,Elevation (deg):,Azimuth (deg):,SNR (dB):,Active Satellites:,Magnetic Variation (deg):,Mode:,Fix Type:,Fix Quality:\n'; // initialize final data holder with column headers
         for (let i = 0; i < data.length; i++) { // start from first line
             var sentenceType = (data[i].substring(0,6)).substring(3,6); // type of NMEA sentence
-            console.log(sentenceType);
+            //console.log(sentenceType);
 
-            //csvString = csvString + '","' + Epoch + '",' + MM + ',' + T + ',' + sma + ',' + ecc + ',' + inc + ',' + weta + ',' + RAAN + ',' + Apo + ',' + Peri + ',' + smaH + '\n';              
+            // for now just parse GGA sentences
+            if (sentenceType === "GGA") {
+                out = GGA(data[i]); // call GGA parsing function
+                csvString = csvString + '"' + data[i] + '",' + out.UTC + ',' + out.FixQual + ',' + out.Latitude + ',' + out.Longitude + ',' + out.ASL + ',' + "future work" + ',' + "future work" + ',' + "future work" + ',' + out.GeoidHeight + ',' + "future work" + ',' + out.HDOP + '\n';              
+            } else {//if future sentence tpye parsing
+                // do nothing
+            }
+
+
+            //csvString = csvString + '"' + data[i] + '",' + out.UTC + ',' + out.Latitude + ',' + out.Longitude + ',' + out.ASL + ',' + "future work" + ',' + "future work" + ',' + "future work" + ',' + out.GeoidHeight + ',' + "future work" + ',' + out.HDOP + '\n';              
         }
 
         let blobFile = new Blob([csvString], {type: 'text/plain'}); // creates new blob data type from 'csvString' string variable
@@ -93,7 +102,7 @@ button:hover {
     }
 
     // NMEA Sentences to parse:
-    // - GGA: Fix data (lat, lon, alt)
+    // - GGA: Fix data (lat, lon, alt, time, HDOP)
     // - GSV: Sats in view
     // - GSA: Dillution of precision + active Sats
     // - VTG: track, ground speed
@@ -101,8 +110,30 @@ button:hover {
 
     // GGA Parsing Function
     function GGA(sentence) {
-        var temp = sentence.split(","); // split by commas
+        var temp = sentence.split(","); // split sentence by commas
+        const outObject = {UTC:"", Latitude:"", Longitude:"", FixQual:"", NumSatsUse:"", HDOP:"", ASL:"", GeoidHeight:""}; // declare empty object
 
+        // Write data from sentence to object
+        outObject.UTC = temp[1]; // write time
+        // Lat & Lon Logic:
+        if (temp[3] == "N") { // north latitude
+            outObject.Latitude = parseFloat(temp[2].substring(0,2)) + parseFloat(temp[2].substring(2,100))/60; // write Latitude (fixed to actual #)
+            console.log(outObject.Latitude)
+        } else { // South latitude
+            outObject.Latitude = -1*parseFloat(temp[2].substring(0,2)) + parseFloat(temp[2].substring(2,100))/60; // write Latitude (fixed to actual #)
+        }
+        if (temp[5] == "E") { // East longtitude
+            outObject.Longitude = parseFloat(temp[4].substring(0,3)) + parseFloat(temp[4].substring(3,100))/60; // write Longitude (fixed to actual #)
+        } else { // West longitude
+            outObject.Longitude = -1*(parseFloat(temp[4].substring(0,3)) + parseFloat(temp[4].substring(3,100))/60); // write Longitude (fixed to actual #)
+        }
+        outObject.FixQual = temp[6]; // write fix quality
+        outObject.NumSatsUse = temp[7]; // write # of Sats used
+        outObject.HDOP = temp[8]; // write HDOP
+        outObject.ASL = temp[9]; // write height ASL
+        outObject.GeoidHeight = temp[11]; // write height above geoid
+
+        return outObject; // return output
     }
 
     // GSV Parsing Function
