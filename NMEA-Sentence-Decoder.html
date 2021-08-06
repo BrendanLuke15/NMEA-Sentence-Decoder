@@ -105,6 +105,8 @@ button:hover {
             if (setComplete) { // write data to CSV row if set complete is TRUE (sentence is GGA; indicating end of set)
                 timeDateString = 'future work'; // formatted time & date string
                 heightAboveEllipsoid = parseFloat(outGGA.GeoidHeight) + parseFloat(outGGA.ASL); // height above WGS-84 ellipsoid
+                geocentricLatitude = Math.atan(Math.pow(1-1/298.257223563,2)*Math.tan(parseFloat(outGGA.Latitude)/180*Math.PI)); // convert geodetic latitude to geocentric latitude
+                
 
                 // write to output CSV string
                 csvString = csvString + "future work," + timeDateString + ',"FQ: ' + outGGA.FixQual + ', RxWarn: ' + outRMC.RxWarn + '",' + outGGA.Latitude
