@@ -5,25 +5,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NMEA Sentence Decoder</title>
-    <meta name="description" content="Turn a .txt file of NMEA Sentences or a text input to a CSV file of GNSS/positional data">
+    <meta name="description" content="Turn a .txt file of NMEA Sentences or a text input to a CSV or GPX file of GNSS/positional data">
     <meta name="author" content="Brendan Luke">
     <link rel="stylesheet" href="stylesheet.css">
     <script src="NMEA-Sentence-Parsing-Functions.js" async></script>
     <script src="CSV-output-function.js" async></script>
     <script src="GPX-output-function.js" async></script>
+    <script src="output-selection-functionality.js" async></script>
     <!--
         Date: August 11, 2021
     -->
 </head>
 <body>
-    <div id="header"> <!-- CSV or GPX select 'buttons' -->
-        
+    <div id="header"> <!-- CSV or GPX select 'buttons', default to CSV selection -->
+        <div id="CSV" class="header-select-icon-active" style="left: 20vw;" onclick="outputType()">CSV</div>
+        <div id="GPX" class="header-select-icon" style="left: 70vw;" onclick="outputType()">GPX</div>
     </div>
     <div id="inputHouse"> <!-- two input options; .txt file and raw text input -->
         <div id="leftBox" class="borderBox">
             <div id="uploadButtonHouse" class="innerBox">
                 <button onclick="fileUpload()" class="inputUnit">Upload NMEA Sentences .txt File</button>
-                <input id="fileInput" type="file" accept=".txt"/> <!--  this element is hidden and activated by button click^ because it has limited styling -->
+                <input id="fileInput" type="file" accept=".txt"/>
+                <!-- ^ this element is hidden and activated by button click^^ because it has limited styling -->
             </div>
         </div>
         <div id="rightBox"class="borderBox">
