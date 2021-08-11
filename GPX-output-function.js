@@ -10,7 +10,17 @@ Purpose: this Javascript file contains the output function that creates a GPX fo
 // Output function
 function outputGPX(data,fileName) {
     data = data.split('\n'); // split data into array by new line
-    var gpxString = ''; // initialize final data holder with column headers
+    var gpxString = '<?xml version="1.0" encoding="UTF-8"?>\n' + 
+                    '<gpx\n' +
+                    '  version="1.1"\n' + 
+                    '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n' +
+                    '  xmlns="http://www.topografix.com/GPX/1/1"\n' +
+                    '  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"\n' +
+                    '  xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"\n' +
+                    '>\n' +
+                    '<metadata>\n' +
+                    '' + // NOT COMPLETE!
+                    '</metadata>\n'; // initialize final data holder with column headers
     setComplete = false; // initialize logic bit to FALSE
     for (let i = 0; i < data.length; i++) { // start from first line
         var sentenceType = (data[i].substring(0,6)).substring(3,6); // type of NMEA sentence

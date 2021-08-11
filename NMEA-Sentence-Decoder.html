@@ -18,8 +18,8 @@
 </head>
 <body>
     <div id="header"> <!-- CSV or GPX select 'buttons', default to CSV selection -->
-        <div id="CSV" class="header-select-icon-active" style="left: 20vw;" onclick="outputType()">CSV</div>
-        <div id="GPX" class="header-select-icon" style="left: 70vw;" onclick="outputType()">GPX</div>
+        <div id="CSV" class="header-select-icon" style="left: 20vw;" onclick="selectCSV()">CSV</div>
+        <div id="GPX" class="header-select-icon" style="left: 70vw;" onclick="selectGPX()">GPX</div>
     </div>
     <div id="inputHouse"> <!-- two input options; .txt file and raw text input -->
         <div id="leftBox" class="borderBox">
@@ -41,6 +41,9 @@
     </div>
 </body>
 <script>
+    // run 'selectCSV()' function initially (default to CSV slelection)
+    selectCSV();
+
     // Read uploaded .txt file case:
     inputButton = document.getElementById('fileInput');
     inputButton.addEventListener('change',fileUpload); // add event listener for change in fileInput
@@ -51,8 +54,12 @@
         var reader = new FileReader(); // create new file reader
         reader.readAsBinaryString(file); // required
         reader.onload = function(e) { // when file upload is completed do the following:
-            let data = e.target.result; // data string 
-            outputCSV(data,fileName);
+            let data = e.target.result; // data string
+            if (outputFlag) { // true if CSV case
+                outputCSV(data,fileName);
+            } else { // false if GPX case
+                outputGPX(data,fileName);
+            }
         }
     }
 
@@ -62,7 +69,11 @@
         if (data === "") { // check if input is empty
             alert('Please submit data to the text input area.'); // alert user to input data
         } else {
-            outputCSV(data,"Output NMEA Sentences.txt");
+            if (outputFlag) { // true if CSV case
+                outputCSV(data,"Output NMEA Sentences.txt");
+            } else { // false if GPX case
+                outputGPX(data,"Output NMEA Sentences.txt");
+            }
         }
     }
 </script>
