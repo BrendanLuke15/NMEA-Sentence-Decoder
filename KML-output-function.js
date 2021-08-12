@@ -3,15 +3,15 @@ By: Brendan Luke
 
 Date: August 12, 2021
 
-Purpose: this Javascript file contains the output function that creates a GPX formatted string and writes it to a .gpx file.
+Purpose: this Javascript file contains the output function that creates a KML formatted string and writes it to a .kml file.
 */
 
 
 // Output function
-function outputGPX(data,fileName) {
+function outputKML(data,fileName) {
     data = data.split('\n'); // split data into array by new line
     fileTimeStamp = new Date().toISOString(); // UTC formatted time stamp for creation of file
-    var gpxString = '<?xml version="1.0" encoding="UTF-8"?>\n' + 
+    var kmlString = '<?xml version="1.0" encoding="UTF-8"?>\n' + 
                     '<gpx\n' +
                     '  version="1.1"\n' + 
                     '  creator="From https://brendanluke15.github.io/NMEA-Sentence-Decoder/NMEA-Sentence-Decoder.html"\n' + 
@@ -27,7 +27,7 @@ function outputGPX(data,fileName) {
                     '  <date>' + fileTimeStamp + '</date>\n' +
                     '</metadata>\n' +
                     '<trk>\n' +
-                    '  <trkseg>\n'; // initialize GPX output string
+                    '  <trkseg>\n'; // initialize KML output string
     setComplete = false; // initialize logic bit to FALSE
     for (let i = 0; i < data.length; i++) { // start from first line
         var sentenceType = (data[i].substring(0,6)).substring(3,6); // type of NMEA sentence
@@ -48,19 +48,19 @@ function outputGPX(data,fileName) {
             // alert?
         }
 
-        // When next sentence is GGA, combine data into one GPX track(?)
+        // When next sentence is GGA, combine data into one KML point
         /*
             consider GGA to be the last sentence returned in a set
         */
-        if (setComplete) { // write data to GPX track(?) if set complete is TRUE (sentence is GGA; indicating end of set)
+        if (setComplete) { // write data to KML point if set complete is TRUE (sentence is GGA; indicating end of set)
             timeDateString = '20'+outRMC.Year+'-'+outRMC.Month+'-'+outRMC.Day+'T'+outGGA.UTC+'Z'; // formatted time & date string           
 
-            // write to output GPX string
-            gpxString = gpxString + 
+            // write to output KML string
+            kmlString = kmlString + 
                 '<trkpt lat="' + outGGA.Latitude + '" lon="' + outGGA.Longitude + '">\n' +
                 '  <ele>' + outGGA.ASL + '</ele>\n' +
                 '  <time>' + timeDateString + '</time>\n' +
-                '</trkpt>\n'; // GPX formatted output string
+                '</trkpt>\n'; // KML formatted output string
 
             // reset logic bit
             setComplete = false;
@@ -68,12 +68,12 @@ function outputGPX(data,fileName) {
     }
 
     // Close out open tags
-    gpxString = gpxString +
+    kmlString = kmlString +
         '  </trkseg>\n' +
         '</trk>\n' +
         '</gpx>';
 
-    let blobFile = new Blob([gpxString], {type: 'text/plain'}); // creates new blob data type from 'gpxString' string variable
+    let blobFile = new Blob([kmlString], {type: 'text/plain'}); // creates new blob data type from 'kmlString' string variable
     // below creates file and downloads it to user's computer
     var a = document.createElement("a"),
     url = URL.createObjectURL(blobFile);
