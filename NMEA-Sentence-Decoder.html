@@ -11,9 +11,9 @@
     <script src="NMEA-Sentence-Parsing-Functions.js" async></script>
     <script src="CSV-output-function.js" async></script>
     <script src="GPX-output-function.js" async></script>
-    <script src="output-selection-functionality.js"></script>
+    <script src="output-selection-functionality.js"></script> <!-- cannot be loaded async because needed to run at page load -->
     <!--
-        Date: August 11, 2021
+        Date: August 12, 2021
     -->
 </head>
 <body>
@@ -70,9 +70,9 @@
             alert('Please submit data to the text input area.'); // alert user to input data
         } else {
             if (outputFlag) { // true if CSV case
-                outputCSV(data,"Output NMEA Sentences.txt");
+                outputCSV(data,"Output GNSS Data.txt");
             } else { // false if GPX case
-                outputGPX(data,"Output NMEA Sentences.txt");
+                outputGPX(data,"Output GNSS Data.txt");
             }
         }
     }

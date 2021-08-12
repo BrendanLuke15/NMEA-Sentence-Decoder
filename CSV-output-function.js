@@ -1,7 +1,7 @@
 /*
 By: Brendan Luke
 
-Date: August 11, 2021
+Date: August 12, 2021
 
 Purpose: this Javascript file contains the output function that creates a CSV formatted string and writes it to a .csv file.
 */
@@ -16,7 +16,6 @@ function outputCSV(data,fileName) {
     setComplete = false; // initialize logic bit to FALSE
     for (let i = 0; i < data.length; i++) { // start from first line
         var sentenceType = (data[i].substring(0,6)).substring(3,6); // type of NMEA sentence
-        //console.log(sentenceType);
 
         // Parse sentences & return data (only GGA, RMC, VTG for now, GSA for DOP's)
         if (sentenceType === "GGA") {
@@ -39,7 +38,7 @@ function outputCSV(data,fileName) {
             consider GGA to be the last sentence returned in a set
         */
         if (setComplete) { // write data to CSV row if set complete is TRUE (sentence is GGA; indicating end of set)
-            timeDateString = 'future work'; // formatted time & date string
+            timeDateString = '20'+outRMC.Year+'-'+outRMC.Month+'-'+outRMC.Day+'T'+outGGA.UTC+'Z'; // formatted time & date string
 
             // Below is all for getting cartesian corrdinates in ECEF coordinate system
             heightAboveEllipsoid = parseFloat(outGGA.GeoidHeight) + parseFloat(outGGA.ASL); // height above WGS-84 ellipsoid
@@ -55,6 +54,9 @@ function outputCSV(data,fileName) {
             csvString = csvString + "future work," + timeDateString + ',"FQ: ' + outGGA.FixQual + ', RxWarn: ' + outRMC.RxWarn + '",' + outGGA.Latitude
                 + "," + outGGA.Longitude + "," + outGGA.ASL + "," + outVTG.GroundTrackTrue + "," + outVTG.MagneticGroundTrack + "," + outVTG.GroundSpeedKts
                 + "," + outGGA.GeoidHeight + "," + outGSA.PDOP + "," + outGSA.HDOP + "," + outGSA.VDOP + "," + X + "," + Y + "," + Z + "\n"; // CSV formatted output string
+
+            // reset logic bit
+            setComplete = false;
         }            
     }
 
