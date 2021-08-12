@@ -11,6 +11,7 @@
     <script src="NMEA-Sentence-Parsing-Functions.js" async></script>
     <script src="CSV-output-function.js" async></script>
     <script src="GPX-output-function.js" async></script>
+    <script src="KML-output-function.js" async></script>
     <script src="output-selection-functionality.js"></script> <!-- cannot be loaded async because needed to run at page load -->
     <!--
         Date: August 12, 2021
@@ -19,7 +20,8 @@
 <body>
     <div id="header"> <!-- CSV or GPX select 'buttons', default to CSV selection -->
         <div id="CSV" class="header-select-icon" style="left: 20vw;" onclick="selectCSV()">CSV</div>
-        <div id="GPX" class="header-select-icon" style="left: 70vw;" onclick="selectGPX()">GPX</div>
+        <div id="GPX" class="header-select-icon" style="left: 45vw;" onclick="selectGPX()">GPX</div>
+        <div id="KML" class="header-select-icon" style="left: 70vw;" onclick="selectKML()">KML</div>
     </div>
     <div id="inputHouse"> <!-- two input options; .txt file and raw text input -->
         <div id="leftBox" class="borderBox">
@@ -55,10 +57,12 @@
         reader.readAsBinaryString(file); // required
         reader.onload = function(e) { // when file upload is completed do the following:
             let data = e.target.result; // data string
-            if (outputFlag) { // true if CSV case
+            if (outputFlag == 1) { // CSV case
                 outputCSV(data,fileName);
-            } else { // false if GPX case
+            } else if (outputFlag == 2) { // GPX case
                 outputGPX(data,fileName);
+            } else { // KML case
+                outputKML(data,fileName);
             }
         }
     }
@@ -69,10 +73,12 @@
         if (data === "") { // check if input is empty
             alert('Please submit data to the text input area.'); // alert user to input data
         } else {
-            if (outputFlag) { // true if CSV case
+            if (outputFlag == 1) { // CSV case
                 outputCSV(data,"Output GNSS Data.txt");
-            } else { // false if GPX case
+            } else if (outputFlag == 2) { // GPX case
                 outputGPX(data,"Output GNSS Data.txt");
+            } else { // KML case
+                outputKML(data,"Output GNSS Data.txt");
             }
         }
     }
