@@ -16,9 +16,9 @@ function outputGPX(data,fileName) {
                     '  version="1.1"\n' + 
                     '  creator="From https://brendanluke15.github.io/NMEA-Sentence-Decoder/NMEA-Sentence-Decoder.html"\n' + 
                     '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n' +
-                    //'  xmlns="http://www.topografix.com/GPX/1/1"\n' +
-                    //'  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"\n' +
-                    //'  xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"\n' +
+                    '  xmlns="http://www.topografix.com/GPX/1/1"\n' +
+                    '  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"\n' +
+                    '  xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"\n' +
                     '>\n' +
                     '<metadata>\n' +
                     '  <name>' + fileName.substring(0,fileName.length-4) + '</name>\n' +
