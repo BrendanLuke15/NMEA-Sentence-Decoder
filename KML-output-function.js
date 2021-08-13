@@ -10,19 +10,39 @@ Purpose: this Javascript file contains the output function that creates a KML fo
 // Output function
 function outputKML(data,fileName) {
     data = data.split('\n'); // split data into array by new line
-    fileTimeStamp = new Date().toISOString(); // UTC formatted time stamp for creation of file
+    fileTimeStamp = new Date(); // time stamp for creation of file
     var kmlString = '<?xml version="1.0" encoding="UTF-8"?>\n' + 
-                    '<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2"\n>\n' +
+                    '<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">\n' +
                     '<Document>\n' +
-                    '  <name>' + fileName.substring(0,fileName.length-4) + '</name>\n' +
-                    /*
-                    '  <description>\n' +
-                    '    This file was generated via: <link>https://brendanluke15.github.io/NMEA-Sentence-Decoder/NMEA-Sentence-Decoder.html</link>, licensed under the MIT License.\n' +
-                    '  </description>\n' +
-                    */
-                    //'  <Folder id="' +  + '">\n' + // have as input from user?
-                    '  <Folder id="Test">\n' +
-                    ''; // initialize KML output string
+                    '\t<name>KML File</name>\n' +
+                    '\t<snippet>Created ' + fileTimeStamp + '</snippet>\n' +
+                    '\t<description>\n' +
+                    '\t\tThis file was generated via: <link>https://brendanluke15.github.io/NMEA-Sentence-Decoder/NMEA-Sentence-Decoder.html</link>, licensed under the MIT License.\n' +
+                    '\t</description>\n' +
+                    '\t<Style id="RedLine">\n' +
+                    '\t\t<LineStyle>\n' +
+                    '\t\t\t<color>ff0000ff</color>\n' +
+                    '\t\t\t<width>2</width>\n' +
+                    '\t\t</LineStyle>\n' +
+                    '\t\t<PolyStyle>\n' +
+                    '\t\t\t<fill>0</fill>\n' +
+                    '\t\t</PolyStyle>\n' +
+                    '\t</Style>\n' +
+                    '\t<Folder id="Main">\n' +
+                    '\t\t<visibility>1</visibility>\n' + 
+                    '\t\t<open>1</open>\n' +
+                    '\t\t<name>' + fileName.substring(0,fileName.length-4) + '</name>\n' +
+                    '\t\t<Placemark id="3DPathNoExtrude">\n' +
+                    '\t\t\t<name>3D Path</name>\n' +
+                    '\t\t\t<styleUrl>#RedLine</styleUrl>\n' +
+                    '\t\t\t<LineString>\n' +
+                    '\t\t\t\t<extrude>0</extrude>\n' +
+                    '\t\t\t\t<tessellate>0</tessellate>\n' +
+                    '\t\t\t\t<altitudeMode>absolute</altitudeMode>\n' +
+                    '\t\t\t\t<coordinates>\n'; // initialize KML output string
+    
+    var coordinates = ''; // initialize coordinates string
+    var timeStamps = ''; // initialize timeStamps string
     setComplete = false; // initialize logic bit to FALSE
     for (let i = 0; i < data.length; i++) { // start from first line
         var sentenceType = (data[i].substring(0,6)).substring(3,6); // type of NMEA sentence
@@ -50,24 +70,24 @@ function outputKML(data,fileName) {
         if (setComplete) { // write data to KML point if set complete is TRUE (sentence is GGA; indicating end of set)
             timeDateString = '20'+outRMC.Year+'-'+outRMC.Month+'-'+outRMC.Day+'T'+outGGA.UTC+'Z'; // formatted time & date string           
 
-            // write to output KML string
-            /*
-            kmlString = kmlString + 
-                '<trkpt lat="' + outGGA.Latitude + '" lon="' + outGGA.Longitude + '">\n' +
-                '  <ele>' + outGGA.ASL + '</ele>\n' +
-                '  <time>' + timeDateString + '</time>\n' +
-                '</trkpt>\n'; // KML formatted output string
+            // write coordinates
+            coordinates = coordinates + '\t\t\t\t\t' + outGGA.Longitude + ',' + outGGA.Latitude + ',' + outGGA.ASL + '\n'; // KML formatted string
+
+            // write time stamps
+            timestamps = timeStamps + timeDateString + '\n'; // string of time stamps
 
             // reset logic bit
             setComplete = false;
-            */
         }            
     }
 
     // Close out open tags
-    kmlString = kmlString +
-        '  </trkseg>\n' +
-        '  </Document>\n' +
+    kmlString = kmlString + coordinates +
+        '\t\t\t\t</coordinates>\n' +
+        '\t\t\t</LineString>\n' +
+        '\t\t</Placemark>\n' +
+        '\t</Folder>\n' +
+        '</Document>\n' +
         '</kml>';
 
     let blobFile = new Blob([kmlString], {type: 'text/plain'}); // creates new blob data type from 'kmlString' string variable
