@@ -1,7 +1,7 @@
 /*
 By: Brendan Luke
 
-Date: August 12, 2021
+Date: August 13, 2021
 
 Purpose: this Javascript file contains the output function that creates a GPX formatted string and writes it to a .gpx file.
 */
@@ -57,10 +57,10 @@ function outputGPX(data,fileName) {
 
             // write to output GPX string
             gpxString = gpxString + 
-                '<trkpt lat="' + outGGA.Latitude + '" lon="' + outGGA.Longitude + '">\n' +
-                '  <ele>' + outGGA.ASL + '</ele>\n' +
-                '  <time>' + timeDateString + '</time>\n' +
-                '</trkpt>\n'; // GPX formatted output string
+                '    <trkpt lat="' + outGGA.Latitude + '" lon="' + outGGA.Longitude + '">\n' +
+                '      <ele>' + outGGA.ASL + '</ele>\n' +
+                '      <time>' + timeDateString + '</time>\n' +
+                '    </trkpt>\n'; // GPX formatted output string
 
             // reset logic bit
             setComplete = false;
