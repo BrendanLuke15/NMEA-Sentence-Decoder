@@ -48,7 +48,7 @@ function outputGPX(data,fileName) {
             // alert?
         }
 
-        // When next sentence is GGA, combine data into one GPX track(?)
+        // When current sentence is GGA, combine data into one GPX track(?)
         /*
             consider GGA to be the last sentence returned in a set
         */

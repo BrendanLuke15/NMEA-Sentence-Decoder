@@ -1,7 +1,7 @@
 /*
 By: Brendan Luke
 
-Date: August 12, 2021
+Date: August 13, 2021
 
 Purpose: this Javascript file contains the output function that creates a CSV formatted string and writes it to a .csv file.
 */
@@ -33,7 +33,7 @@ function outputCSV(data,fileName) {
             // alert?
         }
 
-        // When next sentence is GGA, combine data into one CSV row
+        // When current sentence is GGA, combine data into one CSV row
         /*
             consider GGA to be the last sentence returned in a set
         */
