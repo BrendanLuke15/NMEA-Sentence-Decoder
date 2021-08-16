@@ -1,7 +1,7 @@
 /*
 By: Brendan Luke
 
-Date: August 13, 2021
+Date: August 16, 2021
 
 Purpose: this Javascript file contains the output function that creates a KML formatted string and writes it to a .kml file.
 */
@@ -43,6 +43,8 @@ function outputKML(data,fileName) {
     
     var coordinates = ''; // initialize coordinates string
     var timeStamps = ''; // initialize timeStamps string
+    var points = ''; // initialize timeStamps string
+    var j = 0; // increment counter to name track points
     setComplete = false; // initialize logic bit to FALSE
     for (let i = 0; i < data.length; i++) { // start from first line
         var sentenceType = (data[i].substring(0,6)).substring(3,6); // type of NMEA sentence
@@ -73,19 +75,81 @@ function outputKML(data,fileName) {
             // write coordinates
             coordinates = coordinates + '\t\t\t\t\t' + outGGA.Longitude + ',' + outGGA.Latitude + ',' + outGGA.ASL + '\n'; // KML formatted string
 
+            // write points (with data table (description), timestamp, look at)
+            points = points + 
+                '\t\t\t<Placemark>\n' +
+                '\t\t\t\t<name>' + j + '</name>\n' +
+                '\t\t\t\t<snippet></snippet>\n' + // need blank snippet to prevent description being used in Places panel
+                '\t\t\t\t<description>\n' +
+                '\t\t\t\t\t<![CDATA[<table>\n' +
+                '\t\t\t\t\t\t<tr><td>Longitude: ' + outGGA.Longitude + '° </td></tr>\n' +
+                '\t\t\t\t\t\t<tr><td>Latitude: ' + outGGA.Latitude + '° </td></tr>\n' +
+                '\t\t\t\t\t\t<tr><td>Altitude: ' + outGGA.ASL + 'm </td></tr>\n' +
+                '\t\t\t\t\t\t<tr><td>Ground Speed: ' + outVTG.GroundSpeedKts + ' kts </td></tr>\n' +
+                '\t\t\t\t\t\t<tr><td>True Heading: ' + outVTG.GroundTrackTrue + '° </td></tr>\n' +
+                '\t\t\t\t\t\t<tr><td>Time: ' + timeDateString + ' </td></tr>\n' +
+                '\t\t\t\t\t</table>]]>\n' +
+                '\t\t\t\t</description>\n' +
+                '\t\t\t\t<TimeStamp><when>' + timeDateString + '</when></TimeStamp>\n' +
+                '\t\t\t\t<Point>\n' +
+                '\t\t\t\t\t<altitudeMode>absolute</altitudeMode>\n' +
+                '\t\t\t\t\t<coordinates>' + outGGA.Longitude + ',' + outGGA.Latitude + ',' + outGGA.ASL + '</coordinates>\n' +
+                '\t\t\t\t</Point>\n' +
+                '\t\t\t\t<LookAt>\n' +
+                '\t\t\t\t\t<longitude>' + outGGA.Longitude + '</longitude>\n' +
+                '\t\t\t\t\t<latitude>' + outGGA.Latitude + '</latitude>\n' +
+                '\t\t\t\t\t<altitude>' + outGGA.ASL + '</altitude>\n' +
+                '\t\t\t\t\t<heading>' + outVTG.GroundTrackTrue + '</heading>\n' +
+                '\t\t\t\t\t<tilt>66</tilt>\n' +
+                '\t\t\t\t\t<range>200</range>\n' +
+                '\t\t\t\t</LookAt>\n' +
+                '\t\t\t</Placemark>\n'; // KML formatted string for logging track points
+
             // write time stamps
             timestamps = timeStamps + timeDateString + '\n'; // string of time stamps
 
-            // reset logic bit
+            // reset logic bit & increment counter
             setComplete = false;
+            j = j+1;
         }            
     }
 
-    // Close out open tags
+    // Write products & close out open tags
     kmlString = kmlString + coordinates +
         '\t\t\t\t</coordinates>\n' +
         '\t\t\t</LineString>\n' +
         '\t\t</Placemark>\n' +
+        // Ground path
+        '\t\t<Placemark id="GroundTrack">\n' +
+        '\t\t\t<name>Ground Track</name>\n' +
+        '\t\t\t<styleUrl>#RedLine</styleUrl>\n' +
+        '\t\t\t<LineString>\n' +
+        '\t\t\t\t<extrude>0</extrude>\n' +
+        '\t\t\t\t<tessellate>1</tessellate>\n' +
+        '\t\t\t\t<altitudeMode>clampToGround</altitudeMode>\n' +
+        '\t\t\t\t<coordinates>\n' + coordinates +
+        '\t\t\t\t</coordinates>\n' +
+        '\t\t\t</LineString>\n' +
+        '\t\t</Placemark>\n' +
+        // 3D Path with extend to ground
+        '\t\t<Placemark id="3DPathExtrude">\n' +
+        '\t\t\t<name>3D Path Extended to Ground</name>\n' +
+        '\t\t\t<styleUrl>#RedLine</styleUrl>\n' +
+        '\t\t\t<LineString>\n' +
+        '\t\t\t\t<extrude>1</extrude>\n' +
+        '\t\t\t\t<tessellate>1</tessellate>\n' +
+        '\t\t\t\t<altitudeMode>absolute</altitudeMode>\n' +
+        '\t\t\t\t<coordinates>\n' + coordinates +
+        '\t\t\t\t</coordinates>\n' +
+        '\t\t\t</LineString>\n' +
+        '\t\t</Placemark>\n' +
+        // Folder of Points
+        '\t\t<Folder id="TrackPoints">\n' +
+        '\t\t<open>0</open>\n' + // default closed
+        '\t\t<name>Track Points</name>\n' + points +
+        '\t\t</Folder>\n'
+    // Closing tags
+    kmlString = kmlString +
         '\t</Folder>\n' +
         '</Document>\n' +
         '</kml>';
