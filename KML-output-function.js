@@ -28,6 +28,14 @@ function outputKML(data,fileName) {
                     '\t\t\t<fill>0</fill>\n' +
                     '\t\t</PolyStyle>\n' +
                     '\t</Style>\n' +
+                    '\t<Style id="track">\n' +
+                    '\t\t<IconStyle>\n' +
+                    '\t\t\t<scale>1.2</scale>\n' +
+                    '\t\t\t<Icon>\n' +
+                    '\t\t\t\t<href>http://earth.google.com/images/kml-icons/track-directional/track-0.png</href>\n' +
+                    '\t\t\t</Icon>\n' +
+                    '\t\t</IconStyle>\n' +
+                    '\t</Style>\n' +
                     '\t<Folder id="Main">\n' +
                     '\t\t<visibility>1</visibility>\n' + 
                     '\t\t<open>1</open>\n' +
@@ -80,6 +88,7 @@ function outputKML(data,fileName) {
                 '\t\t\t<Placemark>\n' +
                 '\t\t\t\t<name>' + j + '</name>\n' +
                 '\t\t\t\t<snippet></snippet>\n' + // need blank snippet to prevent description being used in Places panel
+                '\t\t\t\t<visibility>0</visibility>\n' + // default hide contents
                 '\t\t\t\t<description>\n' +
                 '\t\t\t\t\t<![CDATA[<table>\n' +
                 '\t\t\t\t\t\t<tr><td>Longitude: ' + outGGA.Longitude + '° </td></tr>\n' +
@@ -92,6 +101,7 @@ function outputKML(data,fileName) {
                 '\t\t\t\t</description>\n' +
                 '\t\t\t\t<TimeStamp><when>' + timeDateString + '</when></TimeStamp>\n' +
                 '\t\t\t\t<Point>\n' +
+                '\t\t\t\t\t<styleUrl>#track</styleUrl>\n' +
                 '\t\t\t\t\t<altitudeMode>absolute</altitudeMode>\n' +
                 '\t\t\t\t\t<coordinates>' + outGGA.Longitude + ',' + outGGA.Latitude + ',' + outGGA.ASL + '</coordinates>\n' +
                 '\t\t\t\t</Point>\n' +
@@ -146,6 +156,7 @@ function outputKML(data,fileName) {
         // Folder of Points
         '\t\t<Folder id="TrackPoints">\n' +
         '\t\t<open>0</open>\n' + // default closed
+        '\t\t<visibility>0</visibility>\n' + // default hide contents
         '\t\t<name>Track Points</name>\n' + points +
         '\t\t</Folder>\n'
     // Closing tags
