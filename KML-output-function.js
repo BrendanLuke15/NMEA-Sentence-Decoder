@@ -1,7 +1,7 @@
 /*
 By: Brendan Luke
 
-Date: August 16, 2021
+Date: August 17, 2021
 
 Purpose: this Javascript file contains the output function that creates a KML formatted string and writes it to a .kml file.
 */
@@ -50,8 +50,9 @@ function outputKML(data,fileName) {
                     '\t\t\t\t<coordinates>\n'; // initialize KML output string
     
     var coordinates = ''; // initialize coordinates string
-    var timeStamps = ''; // initialize timeStamps string
-    var points = ''; // initialize timeStamps string
+    var whens = ''; // initialize whens string
+    var points = ''; // initialize points string
+    var gxCoords = ''; // initialize gxCoords string
     var j = 0; // increment counter to name track points
     setComplete = false; // initialize logic bit to FALSE
     for (let i = 0; i < data.length; i++) { // start from first line
@@ -111,12 +112,13 @@ function outputKML(data,fileName) {
                 '\t\t\t\t\t<altitude>' + outGGA.ASL + '</altitude>\n' +
                 '\t\t\t\t\t<heading>' + outVTG.GroundTrackTrue + '</heading>\n' +
                 '\t\t\t\t\t<tilt>66</tilt>\n' +
-                '\t\t\t\t\t<range>200</range>\n' +
+                '\t\t\t\t\t<range>400</range>\n' +
                 '\t\t\t\t</LookAt>\n' +
                 '\t\t\t</Placemark>\n'; // KML formatted string for logging track points
 
-            // write time stamps
-            timestamps = timeStamps + timeDateString + '\n'; // string of time stamps
+            // write whens & gxCoords for <gx:Track>
+            whens = whens + '<when>' + timeDateString + '</when>\n'; // string of <when> time stamps
+            gxCoords = gxCoords + '<gx:coord>' + outGGA.Longitude + ',' + outGGA.Latitude + ',' + outGGA.ASL + '</gx:coord>\n'; // string of gx:coords
 
             // reset logic bit & increment counter
             setComplete = false;
@@ -152,6 +154,15 @@ function outputKML(data,fileName) {
         '\t\t\t\t<coordinates>\n' + coordinates +
         '\t\t\t\t</coordinates>\n' +
         '\t\t\t</LineString>\n' +
+        '\t\t</Placemark>\n' +
+        // GX Track
+        '\t\t<Placemark id="gxTrack">\n' +
+        '\t\t\t<name>Track</name>\n' +
+        '\t\t\t<description></description>\n' +
+        '\t\t\t<styleUrl>#track</styleUrl>\n' +
+        '\t\t\t<gx:Track>\n' + 
+        '\t\t\t\t<altitudeMode>absolute</altitudeMode>\n' + whens + gxCoords +
+        '\t\t\t</gx:Track>\n' +
         '\t\t</Placemark>\n' +
         // Folder of Points
         '\t\t<Folder id="TrackPoints">\n' +
