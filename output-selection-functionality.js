@@ -1,7 +1,7 @@
 /*
 By: Brendan Luke
 
-Date: August 12, 2021
+Date: September 8, 2021
 
 Purpose: this Javascript file contatins the functionality for selecting the output type (CSV, GPX, or KML).
 */
@@ -16,6 +16,7 @@ function selectCSV() {
     document.getElementById('CSV').className = 'header-select-icon-active';
     document.getElementById('GPX').className = 'header-select-icon';
     document.getElementById('KML').className = 'header-select-icon';
+    document.getElementById('Stationary').className = 'header-select-icon';
 }
 
 function selectGPX() {
@@ -26,6 +27,7 @@ function selectGPX() {
     document.getElementById('GPX').className = 'header-select-icon-active';
     document.getElementById('CSV').className = 'header-select-icon';
     document.getElementById('KML').className = 'header-select-icon';
+    document.getElementById('Stationary').className = 'header-select-icon';
 }
 
 function selectKML() {
@@ -36,4 +38,16 @@ function selectKML() {
     document.getElementById('KML').className = 'header-select-icon-active';
     document.getElementById('CSV').className = 'header-select-icon';
     document.getElementById('GPX').className = 'header-select-icon';
+    document.getElementById('Stationary').className = 'header-select-icon';
+}
+
+function selectStationary() {
+    // set logic index
+    outputFlag = 4;
+
+    // change 'button' stylings
+    document.getElementById('Stationary').className = 'header-select-icon-active';
+    document.getElementById('CSV').className = 'header-select-icon';
+    document.getElementById('GPX').className = 'header-select-icon';
+    document.getElementById('KML').className = 'header-select-icon';
 }

@@ -14,34 +14,39 @@
     <script src="CSV-output-function.js" async></script>
     <script src="GPX-output-function.js" async></script>
     <script src="KML-output-function.js" async></script>
+    <script src="Stationary-output-function.js" async></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.js" async></script> <!-- Chart.js CDN -->
     <script src="output-selection-functionality.js"></script> <!-- cannot be loaded async because needed to run at page load -->
     <!--
-        Date: August 12, 2021
+        Date: September 8, 2021
     -->
 </head>
 <body>
-    <div id="header"> <!-- CSV or GPX select 'buttons', default to CSV selection -->
-        <div id="CSV" class="header-select-icon" style="left: 20vw;" onclick="selectCSV()">CSV</div>
-        <div id="GPX" class="header-select-icon" style="left: 45vw;" onclick="selectGPX()">GPX</div>
-        <div id="KML" class="header-select-icon" style="left: 70vw;" onclick="selectKML()">KML</div>
+    <div id="header"> <!-- Output type select 'buttons', default to CSV selection -->
+        <div id="CSV" class="header-select-icon" style="left: 5vw;" onclick="selectCSV()">CSV</div>
+        <div id="GPX" class="header-select-icon" style="left: 30vw;" onclick="selectGPX()">GPX</div>
+        <div id="KML" class="header-select-icon" style="left: 55vw;" onclick="selectKML()">KML</div>
+        <div id="Stationary" class="header-select-icon" style="left: 80vw;" onclick="selectStationary()">Stationary</div>
     </div>
-    <div id="inputHouse"> <!-- two input options; .txt file and raw text input -->
-        <div id="leftBox" class="borderBox">
-            <div id="uploadButtonHouse" class="innerBox">
-                <button onclick="fileUpload()" class="inputUnit">Upload NMEA Sentences .txt File</button>
-                <input id="fileInput" type="file" accept=".txt"/>
-                <!-- ^ this element is hidden and activated by button click^^ because it has limited styling -->
+    <div id="StartHouse">
+        <div id="inputHouse"> <!-- two input options; .txt file and raw text input -->
+            <div id="leftBox" class="borderBox">
+                <div id="uploadButtonHouse" class="innerBox">
+                    <button onclick="fileUpload()" class="inputUnit">Upload NMEA Sentences .txt File</button>
+                    <input id="fileInput" type="file" accept=".txt"/>
+                    <!-- ^ this element is hidden and activated by button click^^ because it has limited styling -->
+                </div>
+            </div>
+            <div id="rightBox"class="borderBox">
+                <div id="textInputHouse" class="innerBox">
+                    <label for="input">Paste NMEA Sentences here</label>
+                    <textarea id="textInput" name="input" style="margin-top: 1.5vh;" class="inputUnit"></textarea>
+                </div>
             </div>
         </div>
-        <div id="rightBox"class="borderBox">
-            <div id="textInputHouse" class="innerBox">
-                <label for="input">Paste NMEA Sentences here</label>
-                <textarea id="textInput" name="input" style="margin-top: 1.5vh;" class="inputUnit"></textarea>
-            </div>
+        <div id="submitHouse"> <!-- submit button for raw text input -->
+            <button id="submitText" class="submitButton" onclick="textSubmit()">Submit Text Input</button>
         </div>
-    </div>
-    <div id="submitHouse"> <!-- submit button for raw text input -->
-        <button id="submitText" class="submitButton" onclick="textSubmit()">Submit Text Input</button>
     </div>
 </body>
 <script>
@@ -63,8 +68,10 @@
                 outputCSV(data,fileName);
             } else if (outputFlag == 2) { // GPX case
                 outputGPX(data,fileName);
-            } else { // KML case
+            } else if (outputFlag == 3) { // KML case
                 outputKML(data,fileName);
+            } else { // stationary case
+                outputStationary(data,filename);
             }
         }
     }
@@ -79,8 +86,10 @@
                 outputCSV(data,"Output GNSS Data.txt");
             } else if (outputFlag == 2) { // GPX case
                 outputGPX(data,"Output GNSS Data.txt");
-            } else { // KML case
+            } else if (outputFlag == 3) { // KML case
                 outputKML(data,"Output GNSS Data.txt");
+            } else { // stationary case
+                outputStationary(data,"Output GNSS Data.txt");
             }
         }
     }
